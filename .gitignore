@@ -1,0 +1,43 @@
+# Local configuration and secrets
+/.env
+/.env.*
+!/.env.example
+
+# Go build and test output
+/bin/
+/dist/
+!/web/dist/
+coverage/
+*.exe
+*.test
+*.out
+__debug_bin*
+*.prof
+
+# Node.js dependencies and generated reports
+node_modules/
+web/frontend/.vite/
+web/frontend/playwright-report/
+web/frontend/test-results/
+
+# Air and local runtime output
+/.air/
+/.air_tmp/
+/.cache/
+tmp/
+*.log
+
+# Runtime data
+storage/logs/*
+!storage/logs/.gitkeep
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# OS and editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Project-local developer tools
+.tools/

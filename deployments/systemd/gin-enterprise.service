@@ -1,0 +1,48 @@
+[Unit]
+# 服务名称与说明。
+Description=Gin Enterprise
+# 等网络就绪后再启动，避免启动时连不上数据库。
+After=network-online.target
+Wants=network-online.target
+# 60 秒内连续失败 5 次则停止重启，避免异常时不停拉起。
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+# 前台进程。程序自己监听端口，不由 systemd 托管套接字。
+Type=simple
+# 使用专用系统用户，不要用 root 运行。
+User=gin-enterprise
+Group=gin-enterprise
+# 工作目录。程序从这里读取相对路径。
+WorkingDirectory=/opt/gin-enterprise
+# 配置来自该文件，变量名与项目 .env 一致。
+EnvironmentFile=/opt/gin-enterprise/.env
+ExecStart=/opt/gin-enterprise/server
+
+# 日志写入 journal，标识固定为服务名。
+SyslogIdentifier=gin-enterprise
+StandardOutput=journal
+StandardError=journal
+
+# 停止时发送 SIGTERM。程序收到后关闭 HTTP、定时任务和数据库，超时为 15 秒。
+KillSignal=SIGTERM
+KillMode=mixed
+TimeoutStopSec=20
+
+# 进程异常退出后 3 秒重启。正常停止（systemctl stop）不会重启。
+Restart=on-failure
+RestartSec=3
+
+# HTTP 服务需要足够的文件描述符。
+LimitNOFILE=65535
+
+# 禁止进程再提升权限，隔离临时目录和用户家目录，文件系统只读。
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+
+[Install]
+# 开机进入多用户模式时启动。
+WantedBy=multi-user.target
